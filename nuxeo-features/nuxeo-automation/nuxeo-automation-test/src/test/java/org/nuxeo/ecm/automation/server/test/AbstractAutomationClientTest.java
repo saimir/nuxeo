@@ -43,7 +43,6 @@ import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.client.Constants;
 import org.nuxeo.ecm.automation.client.RemoteException;
@@ -71,11 +70,16 @@ import org.nuxeo.ecm.automation.core.operations.document.DeleteDocument;
 import org.nuxeo.ecm.automation.core.operations.document.FetchDocument;
 import org.nuxeo.ecm.automation.core.operations.document.GetDocumentChildren;
 import org.nuxeo.ecm.automation.core.operations.document.LockDocument;
+import org.nuxeo.ecm.automation.core.operations.document.RemoveDocumentBlob;
 import org.nuxeo.ecm.automation.core.operations.document.UpdateDocument;
-import org.nuxeo.ecm.automation.core.operations.services.DocumentPageProviderOperation;
-import org.nuxeo.ecm.automation.core.operations.services.ResultSetPageProviderOperation;
-import org.nuxeo.ecm.automation.core.operations.services.query.DocumentPaginatedQuery;
-import org.nuxeo.ecm.automation.server.test.UploadFileSupport.DigestMockInputStream;
+import org.nuxeo.ecm.automation.core.operations.services
+        .DocumentPageProviderOperation;
+import org.nuxeo.ecm.automation.core.operations.services
+        .ResultSetPageProviderOperation;
+import org.nuxeo.ecm.automation.core.operations.services.query
+        .DocumentPaginatedQuery;
+import org.nuxeo.ecm.automation.server.test.UploadFileSupport
+        .DigestMockInputStream;
 import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.runtime.api.Framework;
 
@@ -524,6 +528,11 @@ public abstract class AbstractAutomationClientTest {
         assertEquals("text/xml", blob.getMimeType());
         assertEquals("<doc>mydoc2</doc>", IOUtils.toString(blob.getStream(), "utf-8"));
         blob.getFile().delete();
+
+        //now tests the operation when there is no blob attached
+        session.newRequest(RemoveDocumentBlob.ID).setHeader(Constants.HEADER_NX_VOIDOP, "true").setInput(note).set("xpath", "files:files").execute();
+        blobs = (Blobs) session.newRequest(GetDocumentBlobs.ID).setInput(note).set("xpath", "files:files").execute();
+        assertNull(blobs);
     }
 
     /**

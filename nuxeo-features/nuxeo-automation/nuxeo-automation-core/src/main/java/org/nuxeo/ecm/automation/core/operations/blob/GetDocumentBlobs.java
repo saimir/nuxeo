@@ -65,6 +65,8 @@ public class GetDocumentBlobs {
         for (Property p : list) {
             blobs.add((Blob) p.getValue("file"));
         }
+        if (blobs.isEmpty())
+            return null;
         return blobs;
     }
 

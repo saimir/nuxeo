@@ -46,6 +46,7 @@ public class BlobsWriter implements MessageBodyWriter<MultipartBlobs> {
             throws IOException {
         try {
             httpHeaders.putSingle("Content-Type", blobs.getContentType());
+            // This multipart object is not allowing empty value -> throwing exception.
             blobs.writeTo(entityStream);
             entityStream.flush();
         } catch (MessagingException e) {
