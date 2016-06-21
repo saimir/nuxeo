@@ -50,31 +50,31 @@ import org.nuxeo.ecm.core.convert.api.ConverterCheckResult;
 import org.nuxeo.ecm.core.convert.cache.SimpleCachableBlobHolder;
 import org.nuxeo.ecm.core.convert.extension.ConverterDescriptor;
 import org.nuxeo.ecm.core.convert.extension.ExternalConverter;
-import org.nuxeo.ecm.platform.convert.ooomanager.OOoManagerService;
+//import org.nuxeo.ecm.platform.convert.ooomanager.OOoManagerService;
 import org.nuxeo.ecm.platform.mimetype.interfaces.MimetypeRegistry;
 import org.nuxeo.runtime.api.Framework;
 
 /**
  * Converter based on JOD which uses an external OpenOffice process to do actual conversions.
  */
-public class JODBasedConverter implements ExternalConverter {
+public class JODBasedConverter /*implements ExternalConverter*/ {
 
-    protected static final String TMP_PATH_PARAMETER = "TmpDirectory";
+    /*protected static final String TMP_PATH_PARAMETER = "TmpDirectory";
 
     private static final Log log = LogFactory.getLog(JODBasedConverter.class);
 
-    /**
+    *//**
      * Boolean conversion parameter for PDF/A-1.
      *
      * @since 5.6
-     */
+     *//*
     public static final String PDFA1_PARAM = "PDF/A-1";
 
-    /**
+    *//**
      * Boolean parameter to force update of the document TOC
      *
      * @since 5.6
-     */
+     *//*
     public static final String UPDATE_INDEX_PARAM = StandardConversionTask.UPDATE_DOCUMENT_INDEX;
 
     protected static final Map<DocumentFamily, String> PDF_FILTER_NAMES = new HashMap<>();
@@ -91,14 +91,14 @@ public class JODBasedConverter implements ExternalConverter {
         return descriptor.getDestinationMimeType();
     }
 
-    /**
+    *//**
      * Returns the destination format for the given plugin.
      * <p>
      * It takes the actual destination mimetype from the plugin configuration.
      *
      * @param sourceFormat the source format
      * @param pdfa1 true if PDF/A-1 is required
-     */
+     *//*
     protected DocumentFormat getDestinationFormat(OfficeDocumentConverter documentConverter,
             DocumentFormat sourceFormat, boolean pdfa1) {
         String mimeType = getDestinationMimeType();
@@ -145,13 +145,13 @@ public class JODBasedConverter implements ExternalConverter {
         return extendedProperties;
     }
 
-    /**
+    *//**
      * Returns the format for the file passed as a parameter.
      * <p>
      * We will ask the mimetype registry service to sniff its mimetype.
      *
      * @return DocumentFormat for the given file
-     */
+     *//*
     private static DocumentFormat getSourceFormat(OfficeDocumentConverter documentConverter, File file) {
         MimetypeRegistry mimetypeRegistry = Framework.getService(MimetypeRegistry.class);
         String mimetypeStr = mimetypeRegistry.getMimetypeFromFile(file);
@@ -159,11 +159,11 @@ public class JODBasedConverter implements ExternalConverter {
         return format;
     }
 
-    /**
+    *//**
      * Returns the DocumentFormat for the given mimetype.
      *
      * @return DocumentFormat for the given mimetype
-     */
+     *//*
     private static DocumentFormat getSourceFormat(OfficeDocumentConverter documentConverter, String mimetype) {
         return documentConverter.getFormatRegistry().getFormatByMediaType(mimetype);
     }
@@ -345,12 +345,12 @@ public class JODBasedConverter implements ExternalConverter {
         return tmp;
     }
 
-    /**
+    *//**
      * Checks if the {@code inputBlob} string contains a {@code charset} meta tag. If not, add it.
      *
      * @param inputBlob the input blob
      * @throws IOException Signals that an I/O exception has occurred.
-     */
+     *//*
     protected Blob checkCharsetMeta(Blob inputBlob) throws IOException {
 
         String charset = inputBlob.getEncoding();
@@ -368,5 +368,5 @@ public class JODBasedConverter implements ExternalConverter {
             }
         }
         return inputBlob;
-    }
+    }*/
 }

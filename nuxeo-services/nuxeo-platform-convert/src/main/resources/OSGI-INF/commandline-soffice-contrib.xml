@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.ecm.platform.commandline.executor.service.soffice">
+
+  <require>org.nuxeo.ecm.platform.commandline.executor.service.defaultContrib</require>
+  <extension target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent" point="commandTester">
+    <documentation>Default command line tester that accepts test parameters.</documentation>
+    <commandTester name="DefaultCommandTester" class="org.nuxeo.ecm.platform.convert.tester.DefaultCommandTester">
+    </commandTester>
+  </extension>
+
+  <extension target="org.nuxeo.ecm.platform.commandline.executor.service.CommandLineExecutorComponent"
+    point="command">
+
+    <command name="soffice" enabled="true">
+      <commandLine>soffice</commandLine>
+      <parameterString> --headless --convert-to #{format} #{sourceFilePath} --outdir #{targetFilePath}</parameterString>
+      <installationDirective>You need to install OpenOffice/LibreOffice and add soffice to the PATH environment variable</installationDirective>
+      <tester>DefaultCommandTester</tester>
+      <testerParameter name="command">--version</testerParameter>
+    </command>
+
+  </extension>
+
+</component>

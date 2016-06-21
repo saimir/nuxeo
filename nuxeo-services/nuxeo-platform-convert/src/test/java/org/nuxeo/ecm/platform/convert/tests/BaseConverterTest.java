@@ -35,7 +35,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
-import org.nuxeo.ecm.platform.convert.ooomanager.OOoManagerService;
+//import org.nuxeo.ecm.platform.convert.ooomanager.OOoManagerService;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.NXRuntimeTestCase;
 import org.w3c.dom.Document;
@@ -47,7 +47,7 @@ public abstract class BaseConverterTest extends NXRuntimeTestCase {
 
     private static final Log log = LogFactory.getLog(BaseConverterTest.class);
 
-    OOoManagerService oooManagerService;
+    //OOoManagerService oooManagerService;
 
     protected static BlobHolder getBlobFromPath(String path, String srcMT) throws IOException {
         File file = FileUtils.getResourceFileFromContext(path);
@@ -75,21 +75,21 @@ public abstract class BaseConverterTest extends NXRuntimeTestCase {
         deployBundle("org.nuxeo.ecm.core.mimetype");
         deployBundle("org.nuxeo.ecm.platform.convert");
 
-        oooManagerService = Framework.getService(OOoManagerService.class);
+        /*oooManagerService = Framework.getService(OOoManagerService.class);
         try {
             oooManagerService.startOOoManager();
         } catch (Exception e) {
             log.warn("Can't run OpenOffice, JOD converter will not be available.");
-        }
+        }*/
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-        oooManagerService = Framework.getService(OOoManagerService.class);
+        /*oooManagerService = Framework.getService(OOoManagerService.class);
         if (oooManagerService.isOOoManagerStarted()) {
             oooManagerService.stopOOoManager();
-        }
+        }*/
         super.tearDown();
     }
 

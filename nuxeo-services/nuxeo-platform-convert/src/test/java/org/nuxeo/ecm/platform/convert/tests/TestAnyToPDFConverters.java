@@ -65,12 +65,12 @@ public class TestAnyToPDFConverters extends BaseConverterTest {
         BlobHolder hg = getBlobFromPath("test-docs/" + fileName, srcMT);
 
         Map<String, Serializable> parameters = new HashMap<>();
-        if (pdfa) {
+        /*if (pdfa) {
             parameters.put(JODBasedConverter.PDFA1_PARAM, Boolean.TRUE);
         }
         if (updateIndex) {
             parameters.put(JODBasedConverter.UPDATE_INDEX_PARAM, Boolean.TRUE);
-        }
+        }*/
         BlobHolder result = cs.convert(converterName, hg, parameters);
         assertNotNull(result);
 
