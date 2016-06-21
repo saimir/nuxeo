@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2006-2008 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2016 Nuxeo SA (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,27 +15,18 @@
  *
  * Contributors:
  *     Nuxeo - initial API and implementation
- *
- * $Id$
- *
  */
-
 package org.nuxeo.ecm.platform.convert.tester;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 
 import org.nuxeo.common.utils.ArrayUtils;
-import org.nuxeo.common.utils.StringUtils;
 import org.nuxeo.ecm.platform.commandline.executor.service.CommandLineDescriptor;
 import org.nuxeo.ecm.platform.commandline.executor.service.cmdtesters.CommandTestResult;
 import org.nuxeo.ecm.platform.commandline.executor.service.cmdtesters.CommandTester;
 
 /**
- *
- *
+ * Simple CommandTester that accepts an arbitrary number of parameters to test the command.
  * @author rdias
  */
 public class DefaultCommandTester implements CommandTester {

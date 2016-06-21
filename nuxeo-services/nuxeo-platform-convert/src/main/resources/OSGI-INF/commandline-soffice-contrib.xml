@@ -13,7 +13,7 @@
 
     <command name="soffice" enabled="true">
       <commandLine>soffice</commandLine>
-      <parameterString> -env:UserInstallation=file:///tmp/sofficetmp --invisible --convert-to #{format} #{sourceFilePath} --outdir #{targetFilePath}</parameterString>
+      <parameterString> -env:UserInstallation=file:///tmp/sofficetmp --headless --convert-to #{format} #{sourceFilePath} --outdir #{targetFilePath}</parameterString>
       <installationDirective>You need to install OpenOffice/LibreOffice and add soffice to the PATH environment variable</installationDirective>
       <tester>DefaultCommandTester</tester>
       <testerParameter name="command">--version</testerParameter>
