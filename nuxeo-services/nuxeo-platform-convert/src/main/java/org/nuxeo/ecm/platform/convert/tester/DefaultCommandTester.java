@@ -45,9 +45,9 @@ public class DefaultCommandTester implements CommandTester {
         String cmd = cmdDescriptor.getCommand();
         try {
             String[] testerParameters = cmdDescriptor.getTesterParameters().values().toArray(new String[]{});
-            String[] testCommand = ArrayUtils.arrayMerge(new String [] {cmd}, testerParameters);
+            String[] cmdArray = ArrayUtils.arrayMerge(new String [] {cmd}, testerParameters);
 
-            Runtime.getRuntime().exec(testCommand);
+            Runtime.getRuntime().exec(cmdArray);
 
         } catch (IOException e) {
             return new CommandTestResult(

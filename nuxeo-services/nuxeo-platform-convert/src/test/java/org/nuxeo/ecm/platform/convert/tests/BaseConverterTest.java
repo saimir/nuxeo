@@ -73,6 +73,7 @@ public abstract class BaseConverterTest extends NXRuntimeTestCase {
         deployBundle("org.nuxeo.ecm.core.convert.api");
         deployBundle("org.nuxeo.ecm.core.convert");
         deployBundle("org.nuxeo.ecm.core.mimetype");
+        deployBundle("org.nuxeo.ecm.platform.commandline.executor");
         deployBundle("org.nuxeo.ecm.platform.convert");
 
         /*oooManagerService = Framework.getService(OOoManagerService.class);
