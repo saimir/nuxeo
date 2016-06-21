@@ -14,6 +14,7 @@
       <destinationMimeType>text/html</destinationMimeType>
       <destinationMimeType>text/plain</destinationMimeType>
       <destinationMimeType>text/csv</destinationMimeType>
+      <destinationMimeType>text/csv</destinationMimeType>
       <destinationMimeType>text/tsv</destinationMimeType>
     </converter>
 
@@ -46,6 +47,14 @@
         <parameter name="CommandLineName">pdftohtml</parameter>
       </parameters>
     </converter>
+
+      <converter name="pdf2text" class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
+          <sourceMimeType>application/pdf</sourceMimeType>
+          <destinationMimeType>text/plain</destinationMimeType>
+          <parameters>
+              <parameter name="CommandLineName">pdftotext</parameter>
+          </parameters>
+      </converter>
 
     <converter name="pdf2image" class="org.nuxeo.ecm.platform.convert.plugins.PDF2ImageConverter">
       <sourceMimeType>application/pdf</sourceMimeType>
