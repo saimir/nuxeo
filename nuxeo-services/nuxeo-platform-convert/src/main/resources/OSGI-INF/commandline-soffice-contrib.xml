@@ -12,8 +12,8 @@
     point="command">
     <command name="soffice" enabled="true">
       <commandLine>soffice</commandLine>
-      <parameterString> --headless --norestore --writer --convert-to #{format} #{sourceFilePath} --outdir #{targetFilePath}</parameterString>
-      <winParameterString> --headless --norestore --writer --convert-to #{format} #{sourceFilePath} --outdir #{targetFilePath}</winParameterString>
+      <parameterString> --headless --norestore --writer --convert-to #{format} #{sourceFilePath} --outdir #{outDirPath}</parameterString>
+      <winParameterString> --headless --norestore --writer --convert-to #{format} #{sourceFilePath} --outdir #{outDirPath}</winParameterString>
       <installationDirective>You need to install OpenOffice/LibreOffice and add soffice to the PATH environment variable</installationDirective>
       <tester>DefaultCommandTester</tester>
       <testerParameter name="command">--version</testerParameter>

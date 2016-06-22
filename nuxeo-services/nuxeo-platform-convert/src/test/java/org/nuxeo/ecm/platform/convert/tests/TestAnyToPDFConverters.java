@@ -79,7 +79,7 @@ public class TestAnyToPDFConverters extends BaseConverterTest {
         String text = null;
         try {
             result.getBlob().transferTo(pdfFile);
-            text = readPdfText(pdfFile);
+            text = DocumentUTUtils.readPdfText(pdfFile);
             assertTrue(text.contains("Hello") || text.contains("hello"));
             if (pdfa) {
                 assertTrue("Output is not PDF/A", isPDFA(pdfFile));

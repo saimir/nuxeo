@@ -30,7 +30,8 @@
             </parameters>
         </converter>
 
-        <converter name="wpd2html" class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
+        <!--converter name="wpd2html" class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
+      <converter name="wpd2html" class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <sourceMimeType>application/wordperfect</sourceMimeType>
             <destinationMimeType>text/html</destinationMimeType>
         </converter>
@@ -53,8 +54,10 @@
             </parameters>
         </converter>
 
-        <converter name="any2ods"
-                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
+        <!--converter name="any2ods"
+                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
+      <converter name="any2ods"
+                 class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <destinationMimeType>application/vnd.oasis.opendocument.spreadsheet</destinationMimeType>
 
             <!-- Microsoft office documents -->
@@ -75,8 +78,10 @@
             </sourceMimeType>
         </converter>
 
+        <!--converter name="any2odp"
+                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
         <converter name="any2odp"
-                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
+          class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <destinationMimeType>application/vnd.oasis.opendocument.presentation</destinationMimeType>
 
             <!-- Microsoft office documents -->
@@ -98,8 +103,10 @@
         </converter>
 
 
+        <!--converter name="any2pdf"
+                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
         <converter name="any2pdf"
-                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
+                   class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <destinationMimeType>application/pdf</destinationMimeType>
 
             <sourceMimeType>text/xml</sourceMimeType>
@@ -168,8 +175,10 @@
             </parameters>
         </converter>
 
-        <converter name="office2html"
-                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
+        <!--converter name="office2html"
+                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
+      <converter name="office2html"
+          class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <destinationMimeType>text/html</destinationMimeType>
 
             <sourceMimeType>text/xml</sourceMimeType>
@@ -229,6 +238,11 @@
             <sourceMimeType>
                 application/vnd.oasis.opendocument.graphics-template
             </sourceMimeType>
+
+        <parameters>
+          <parameter name="CommandLineName">soffice</parameter>
+        </parameters>
+
         </converter>
 
         <converter name="md2html" class="org.nuxeo.ecm.platform.convert.plugins.Md2HtmlConverter">

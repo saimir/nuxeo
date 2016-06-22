@@ -35,6 +35,7 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
@@ -46,31 +47,17 @@ import org.nuxeo.ecm.platform.commandline.executor.api.CommandAvailability;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.NXRuntimeTestCase;
+import org.nuxeo.runtime.test.runner.Features;
+import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
-public class TestSOfficeConverter extends NXRuntimeTestCase {
+public class TestSOfficeConverter extends BaseConverterTest {
 
     protected ConversionService cs;
 
-    @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        deployBundle("org.nuxeo.ecm.core.api");
-        deployBundle("org.nuxeo.ecm.core.convert.api");
-        deployBundle("org.nuxeo.ecm.core.convert");
-        deployBundle("org.nuxeo.ecm.platform.commandline.executor");
-        deployBundle("org.nuxeo.ecm.platform.convert");
-        deployTestContrib("org.nuxeo.ecm.platform.commandline.executor.service.soffice.test",
-                "OSGI-INF/test-soffice-env-contrib.xml");
-
         cs = Framework.getLocalService(ConversionService.class);
         assertNotNull(cs);
-    }
-
-    protected static BlobHolder getBlobFromPath(String path) throws IOException {
-        File file = FileUtils.getResourceFileFromContext(path);
-        assertTrue(file.length() > 0);
-        return new SimpleBlobHolder(Blobs.createBlob(file));
     }
 
     @Test

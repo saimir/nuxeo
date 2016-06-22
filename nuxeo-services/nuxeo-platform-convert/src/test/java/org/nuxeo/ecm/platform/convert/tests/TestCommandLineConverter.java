@@ -32,6 +32,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.artofsolving.jodconverter.cli.Convert;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,24 +52,14 @@ import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
 import org.nuxeo.runtime.test.runner.RuntimeFeature;
 
-@RunWith(FeaturesRunner.class)
-@Features(RuntimeFeature.class)
-@Deploy({ "org.nuxeo.ecm.core.api", "org.nuxeo.ecm.core.convert.api", "org.nuxeo.ecm.core.convert",
-        "org.nuxeo.ecm.platform.commandline.executor", "org.nuxeo.ecm.platform.convert" })
 @LocalDeploy("org.nuxeo.ecm.platform.convert:test-command-line-converter-contrib.xml")
-public class TestCommandLineConverter {
+public class TestCommandLineConverter extends BaseConverterTest {
 
     @Inject
     protected ConversionService cs;
 
     @Inject
     protected CommandLineExecutorService cles;
-
-    protected static BlobHolder getBlobFromPath(String path) throws IOException {
-        File file = FileUtils.getResourceFileFromContext(path);
-        assertTrue(file.length() > 0);
-        return new SimpleBlobHolder(Blobs.createBlob(file));
-    }
 
     @Test
     public void testCommandLineConverter() throws Exception {

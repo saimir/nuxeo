@@ -30,6 +30,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
@@ -38,16 +39,18 @@ import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
 //import org.nuxeo.ecm.platform.convert.ooomanager.OOoManagerService;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.NXRuntimeTestCase;
+import org.nuxeo.runtime.test.runner.Features;
+import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import static org.junit.Assert.*;
 
-public abstract class BaseConverterTest extends NXRuntimeTestCase {
+@RunWith(FeaturesRunner.class)
+@Features(ConvertFeatures.class)
+public abstract class BaseConverterTest {
 
-    private static final Log log = LogFactory.getLog(BaseConverterTest.class);
-
-    //OOoManagerService oooManagerService;
+    protected static final Log log = LogFactory.getLog(BaseConverterTest.class);
 
     protected static BlobHolder getBlobFromPath(String path, String srcMT) throws IOException {
         File file = FileUtils.getResourceFileFromContext(path);
@@ -63,46 +66,6 @@ public abstract class BaseConverterTest extends NXRuntimeTestCase {
 
     protected static BlobHolder getBlobFromPath(String path) throws IOException {
         return getBlobFromPath(path, null);
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        deployBundle("org.nuxeo.ecm.core.api");
-        deployBundle("org.nuxeo.ecm.core.convert.api");
-        deployBundle("org.nuxeo.ecm.core.convert");
-        deployBundle("org.nuxeo.ecm.core.mimetype");
-        deployBundle("org.nuxeo.ecm.platform.commandline.executor");
-        deployBundle("org.nuxeo.ecm.platform.convert");
-
-        deployTestContrib("org.nuxeo.ecm.platform.commandline.executor.service.soffice.test",
-                "OSGI-INF/test-soffice-env-contrib.xml");
-
-        /*oooManagerService = Framework.getService(OOoManagerService.class);
-        try {
-            oooManagerService.startOOoManager();
-        } catch (Exception e) {
-            log.warn("Can't run OpenOffice, JOD converter will not be available.");
-        }*/
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        /*oooManagerService = Framework.getService(OOoManagerService.class);
-        if (oooManagerService.isOOoManagerStarted()) {
-            oooManagerService.stopOOoManager();
-        }*/
-        super.tearDown();
-    }
-
-    public static String readPdfText(File pdfFile) throws IOException {
-        PDFTextStripper textStripper = new PDFTextStripper();
-        PDDocument document = PDDocument.load(pdfFile);
-        String text = textStripper.getText(document);
-        document.close();
-        return text.trim();
     }
 
     public static boolean isPDFA(File pdfFile) throws Exception {

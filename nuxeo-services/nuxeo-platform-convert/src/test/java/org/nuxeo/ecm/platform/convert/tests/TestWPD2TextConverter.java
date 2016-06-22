@@ -32,13 +32,6 @@ import static org.junit.Assert.*;
 
 public class TestWPD2TextConverter extends BaseConverterTest {
 
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        deployBundle("org.nuxeo.ecm.platform.commandline.executor");
-    }
-
     @Test
     public void testWordPerfectToTextConverter() throws Exception {
 

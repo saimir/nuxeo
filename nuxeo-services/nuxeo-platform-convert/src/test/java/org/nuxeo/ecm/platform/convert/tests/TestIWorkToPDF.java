@@ -41,28 +41,17 @@ import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
 import org.nuxeo.ecm.core.convert.api.ConversionException;
 import org.nuxeo.ecm.core.convert.api.ConversionService;
 import org.nuxeo.ecm.core.convert.api.ConverterCheckResult;
+import org.nuxeo.ecm.core.model.Document;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandAvailability;
 import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorService;
 import org.nuxeo.runtime.api.Framework;
-import org.nuxeo.runtime.test.NXRuntimeTestCase;
 
-public class TestIWorkToPDF extends NXRuntimeTestCase {
+public class TestIWorkToPDF extends BaseConverterTest {
 
     protected ConversionService cs;
 
-    @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        deployBundle("org.nuxeo.ecm.core.api");
-        deployBundle("org.nuxeo.ecm.core.mimetype");
-        deployBundle("org.nuxeo.ecm.core.convert.api");
-        deployBundle("org.nuxeo.ecm.core.convert");
-        deployBundle("org.nuxeo.ecm.platform.commandline.executor");
-        deployBundle("org.nuxeo.ecm.platform.convert");
-
-        deployTestContrib("org.nuxeo.ecm.platform.commandline.executor.service.soffice.test",
-                "OSGI-INF/test-soffice-env-contrib.xml");
 
         cs = Framework.getLocalService(ConversionService.class);
         assertNotNull(cs);
@@ -98,7 +87,7 @@ public class TestIWorkToPDF extends NXRuntimeTestCase {
         File pdfFile = Framework.createTempFile("testingPDFConverter", ".pdf");
         try {
             result.getBlob().transferTo(pdfFile);
-            String text = BaseConverterTest.readPdfText(pdfFile).toLowerCase();
+            String text = DocumentUTUtils.readPdfText(pdfFile).toLowerCase();
             assertTrue(text.contains("hello"));
         } finally {
             pdfFile.delete();

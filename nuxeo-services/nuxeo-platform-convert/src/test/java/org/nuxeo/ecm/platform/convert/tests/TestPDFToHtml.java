@@ -44,28 +44,14 @@ import org.nuxeo.ecm.platform.commandline.executor.api.CommandLineExecutorServic
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.NXRuntimeTestCase;
 
-public class TestPDFToHtml extends NXRuntimeTestCase {
+public class TestPDFToHtml extends BaseConverterTest {
 
     protected ConversionService cs;
 
-    @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        deployBundle("org.nuxeo.ecm.core.api");
-        deployBundle("org.nuxeo.ecm.core.convert.api");
-        deployBundle("org.nuxeo.ecm.core.convert");
-        deployBundle("org.nuxeo.ecm.platform.commandline.executor");
-        deployBundle("org.nuxeo.ecm.platform.convert");
-
         cs = Framework.getLocalService(ConversionService.class);
         assertNotNull(cs);
-    }
-
-    protected static BlobHolder getBlobFromPath(String path) throws IOException {
-        File file = FileUtils.getResourceFileFromContext(path);
-        assertTrue(file.length() > 0);
-        return new SimpleBlobHolder(Blobs.createBlob(file));
     }
 
     @Test
