@@ -48,7 +48,7 @@ public class SOfficeConverter extends CommandLineBasedConverter {
         String outputPath = cmdParams.getParameter("targetFilePath");
         File outputDir = new File(outputPath);
         File[] files = outputDir.listFiles();
-        List<Blob> blobs = new ArrayList<Blob>();
+        List<Blob> blobs = new ArrayList<>();
 
         for (File file : files) {
             Blob blob;

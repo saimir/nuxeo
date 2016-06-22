@@ -39,8 +39,6 @@ public class DefaultCommandTester implements CommandTester {
             String[] cmdArray = ArrayUtils.arrayMerge(new String [] {cmd}, testerParameters);
 
             Runtime.getRuntime().exec(cmdArray);
-
-
         } catch (IOException e) {
             return new CommandTestResult(
                     "command " + cmd + " not found in system path (descriptor " + cmdDescriptor + ")");

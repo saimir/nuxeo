@@ -30,14 +30,9 @@
             </parameters>
         </converter>
 
-        <!--converter name="wpd2html" class="org.nuxeo.ecm.platform.convert.plugins.JODBasedConverter"-->
         <converter name="wpd2html" class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
             <sourceMimeType>application/wordperfect</sourceMimeType>
             <destinationMimeType>text/html</destinationMimeType>
-            <!--parameters>
-                <parameter name="ooo_host_name">${org.nuxeo.ecm.platform.transform.ooo.host.name}</parameter>
-                <parameter name="ooo_host_port">${org.nuxeo.ecm.platform.transform.ooo.host.port}</parameter>
-            </parameters-->
         </converter>
 
         <converter name="pdf2html" class="org.nuxeo.ecm.platform.convert.plugins.PDF2HtmlConverter">
@@ -58,18 +53,6 @@
             </parameters>
         </converter>
 
-        <!--converter name="soffice" class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
-            <destinationMimeType>application/pdf</destinationMimeType>
-            <sourceMimeType>image/jpeg</sourceMimeType>
-            <sourceMimeType>image/png</sourceMimeType>
-            <sourceMimeType>image/gif</sourceMimeType>
-            <parameters>
-                <parameter name="CommandLineName">soffice</parameter>
-            </parameters>
-        </converter-->
-
-        <!--converter name="any2ods"
-                   class="org.nuxeo.ecm.platform.convert.plugins.JODBasedConverter"-->
         <converter name="any2ods"
                    class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
             <destinationMimeType>application/vnd.oasis.opendocument.spreadsheet</destinationMimeType>
@@ -90,20 +73,8 @@
             <sourceMimeType>
                 application/vnd.oasis.opendocument.spreadsheet-template
             </sourceMimeType>
-
-            <!--parameters>
-                <parameter name="ooo_host_name">
-                    ${org.nuxeo.ecm.platform.transform.ooo.host.name}
-                </parameter>
-                <parameter name="ooo_host_port">
-                    ${org.nuxeo.ecm.platform.transform.ooo.host.port}
-                </parameter>
-            </parameters-->
-
         </converter>
 
-        <!--converter name="any2odp"
-                   class="org.nuxeo.ecm.platform.convert.plugins.JODBasedConverter"-->
         <converter name="any2odp"
                    class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
             <destinationMimeType>application/vnd.oasis.opendocument.presentation</destinationMimeType>
@@ -124,16 +95,6 @@
             <sourceMimeType>
                 application/vnd.oasis.opendocument.presentation-template
             </sourceMimeType>
-
-            <!--parameters>
-                <parameter name="ooo_host_name">
-                    ${org.nuxeo.ecm.platform.transform.ooo.host.name}
-                </parameter>
-                <parameter name="ooo_host_port">
-                    ${org.nuxeo.ecm.platform.transform.ooo.host.port}
-                </parameter>
-            </parameters-->
-
         </converter>
 
 
@@ -205,20 +166,8 @@
             <parameters>
                 <parameter name="CommandLineName">soffice</parameter>
             </parameters>
-
-            <!--parameters>
-                <parameter name="ooo_host_name">
-                    ${org.nuxeo.ecm.platform.transform.ooo.host.name}
-                </parameter>
-                <parameter name="ooo_host_port">
-                    ${org.nuxeo.ecm.platform.transform.ooo.host.port}
-                </parameter>
-            </parameters-->
         </converter>
 
-
-        <!--converter name="office2html"
-                   class="org.nuxeo.ecm.platform.convert.plugins.JODBasedConverter"-->
         <converter name="office2html"
                    class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter">
             <destinationMimeType>text/html</destinationMimeType>
@@ -280,15 +229,6 @@
             <sourceMimeType>
                 application/vnd.oasis.opendocument.graphics-template
             </sourceMimeType>
-
-            <!--parameters>
-                <parameter name="ooo_host_name">
-                    ${org.nuxeo.ecm.platform.transform.ooo.host.name}
-                </parameter>
-                <parameter name="ooo_host_port">
-                    ${org.nuxeo.ecm.platform.transform.ooo.host.port}
-                </parameter>
-            </parameters-->
         </converter>
 
         <converter name="md2html" class="org.nuxeo.ecm.platform.convert.plugins.Md2HtmlConverter">
