@@ -101,7 +101,7 @@ public class TestAnyToPDFConverters extends BaseConverterTest {
                         check.getErrorMessage()), check.isAvailable());
 
         doTestPDFConverter("text/html", "hello.html");
-        // doTestPDFConverter("text/xml", "hello.xml");
+        doTestPDFConverter("text/xml", "hello.xml");
         doTestPDFConverter("application/vnd.ms-excel", "hello.xls");
         doTestPDFConverter("application/vnd.sun.xml.writer", "hello.sxw");
         doTestPDFConverter("application/vnd.oasis.opendocument.text", "hello.odt");

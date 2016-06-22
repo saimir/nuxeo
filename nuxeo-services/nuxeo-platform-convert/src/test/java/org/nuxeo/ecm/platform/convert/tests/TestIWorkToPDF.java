@@ -61,6 +61,9 @@ public class TestIWorkToPDF extends NXRuntimeTestCase {
         deployBundle("org.nuxeo.ecm.platform.commandline.executor");
         deployBundle("org.nuxeo.ecm.platform.convert");
 
+        deployTestContrib("org.nuxeo.ecm.platform.commandline.executor.service.soffice.test",
+                "OSGI-INF/test-soffice-env-contrib.xml");
+
         cs = Framework.getLocalService(ConversionService.class);
         assertNotNull(cs);
     }

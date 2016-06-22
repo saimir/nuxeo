@@ -39,8 +39,7 @@ import org.nuxeo.ecm.platform.commandline.executor.api.CmdParameters;
 /**
  * SOffice converter based on the soffice command-line executable from OpenOffice/LibreOffice.
  *
- * @author tiry
- * @author Vincent Dutat
+ * @author rdias
  */
 public class SOfficeConverter extends CommandLineBasedConverter {
 
@@ -68,7 +67,7 @@ public class SOfficeConverter extends CommandLineBasedConverter {
     protected Map<String, Blob> getCmdBlobParameters(BlobHolder blobHolder, Map<String, Serializable> parameters)
             throws ConversionException {
 
-        Map<String, Blob> cmdBlobParams = new HashMap<String, Blob>();
+        Map<String, Blob> cmdBlobParams = new HashMap<>();
         cmdBlobParams.put("sourceFilePath", blobHolder.getBlob());
         return cmdBlobParams;
     }
@@ -77,7 +76,7 @@ public class SOfficeConverter extends CommandLineBasedConverter {
     protected Map<String, String> getCmdStringParameters(BlobHolder blobHolder, Map<String, Serializable> parameters)
             throws ConversionException {
 
-        Map<String, String> cmdStringParams = new HashMap<String, String>();
+        Map<String, String> cmdStringParams = new HashMap<>();
 
         String baseDir = getTmpDirectory(parameters);
         Path tmpPath = new Path(baseDir).append("soffice_" + System.currentTimeMillis());
@@ -87,7 +86,6 @@ public class SOfficeConverter extends CommandLineBasedConverter {
         if (!dirCreated) {
             throw new ConversionException("Unable to create tmp dir for transformer output");
         }
-        //cmdStringParams.put("outDirPath", outDir.getAbsolutePath());
         cmdStringParams.put("targetFilePath", outDir.getAbsolutePath());
         cmdStringParams.put("format", parameters.get("format").toString());
         return cmdStringParams;

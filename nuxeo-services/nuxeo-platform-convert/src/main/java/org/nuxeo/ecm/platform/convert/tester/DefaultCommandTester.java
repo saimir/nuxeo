@@ -26,7 +26,7 @@ import org.nuxeo.ecm.platform.commandline.executor.service.cmdtesters.CommandTes
 import org.nuxeo.ecm.platform.commandline.executor.service.cmdtesters.CommandTester;
 
 /**
- * Simple CommandTester that accepts an arbitrary number of parameters to test the command.
+ * Simple {@link CommandTester} that accepts an arbitrary number of parameters to test the command.
  * @author rdias
  */
 public class DefaultCommandTester implements CommandTester {
@@ -39,6 +39,7 @@ public class DefaultCommandTester implements CommandTester {
             String[] cmdArray = ArrayUtils.arrayMerge(new String [] {cmd}, testerParameters);
 
             Runtime.getRuntime().exec(cmdArray);
+
 
         } catch (IOException e) {
             return new CommandTestResult(

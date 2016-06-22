@@ -76,6 +76,9 @@ public abstract class BaseConverterTest extends NXRuntimeTestCase {
         deployBundle("org.nuxeo.ecm.platform.commandline.executor");
         deployBundle("org.nuxeo.ecm.platform.convert");
 
+        deployTestContrib("org.nuxeo.ecm.platform.commandline.executor.service.soffice.test",
+                "OSGI-INF/test-soffice-env-contrib.xml");
+
         /*oooManagerService = Framework.getService(OOoManagerService.class);
         try {
             oooManagerService.startOOoManager();
