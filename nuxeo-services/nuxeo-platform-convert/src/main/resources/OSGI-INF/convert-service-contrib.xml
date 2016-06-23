@@ -30,7 +30,6 @@
             </parameters>
         </converter>
 
-        <!--converter name="wpd2html" class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
       <converter name="wpd2html" class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <sourceMimeType>application/wordperfect</sourceMimeType>
             <destinationMimeType>text/html</destinationMimeType>
@@ -54,8 +53,6 @@
             </parameters>
         </converter>
 
-        <!--converter name="any2ods"
-                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
       <converter name="any2ods"
                  class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <destinationMimeType>application/vnd.oasis.opendocument.spreadsheet</destinationMimeType>
@@ -78,8 +75,6 @@
             </sourceMimeType>
         </converter>
 
-        <!--converter name="any2odp"
-                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
         <converter name="any2odp"
           class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <destinationMimeType>application/vnd.oasis.opendocument.presentation</destinationMimeType>
@@ -102,9 +97,6 @@
             </sourceMimeType>
         </converter>
 
-
-        <!--converter name="any2pdf"
-                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
         <converter name="any2pdf"
                    class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <destinationMimeType>application/pdf</destinationMimeType>
@@ -175,8 +167,6 @@
             </parameters>
         </converter>
 
-        <!--converter name="office2html"
-                   class="org.nuxeo.ecm.platform.convert.plugins.SOfficeConverter"-->
       <converter name="office2html"
           class="org.nuxeo.ecm.platform.convert.plugins.CommandLineConverter">
             <destinationMimeType>text/html</destinationMimeType>

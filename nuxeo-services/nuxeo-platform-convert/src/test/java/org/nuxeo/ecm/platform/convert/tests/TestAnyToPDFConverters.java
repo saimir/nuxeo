@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.convert.api.ConversionService;
 import org.nuxeo.ecm.core.convert.api.ConverterCheckResult;
-import org.nuxeo.ecm.platform.convert.plugins.JODBasedConverter;
 import org.nuxeo.runtime.api.Framework;
 
 import static org.junit.Assert.*;
