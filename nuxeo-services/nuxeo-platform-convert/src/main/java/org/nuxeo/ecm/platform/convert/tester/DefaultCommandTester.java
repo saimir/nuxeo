@@ -26,22 +26,22 @@ import org.nuxeo.ecm.platform.commandline.executor.service.cmdtesters.CommandTes
 import org.nuxeo.ecm.platform.commandline.executor.service.cmdtesters.CommandTester;
 
 /**
- * Simple {@link CommandTester} that accepts an arbitrary number of parameters to test the command.
+ * Simple {@link CommandTester} that accepts a command to test the existance of the command line.
  * @author rdias
  */
 public class DefaultCommandTester implements CommandTester {
 
     @Override
     public CommandTestResult test(CommandLineDescriptor cmdDescriptor) {
-        String cmd = cmdDescriptor.getCommand();
-        try {
-            String[] testerParameters = cmdDescriptor.getTesterParameters().values().toArray(new String[]{});
-            String[] cmdArray = ArrayUtils.arrayMerge(new String [] {cmd}, testerParameters);
 
-            Runtime.getRuntime().exec(cmdArray);
+        String cmd = cmdDescriptor.getTesterParameters().get("command");
+        try {
+
+            Runtime.getRuntime().exec(cmd);
+
         } catch (IOException e) {
             return new CommandTestResult(
-                    "command " + cmd + " not found in system path (descriptor " + cmdDescriptor + ")");
+                    "command " + cmdDescriptor.getCommand() + " not found in system path (descriptor " + cmdDescriptor + ")");
         }
 
         return new CommandTestResult();
