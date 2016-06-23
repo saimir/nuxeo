@@ -7,7 +7,7 @@
     <command name="pdftotext" enabled="true">
       <commandLine>pdftotext</commandLine>
       <parameterString>-enc UTF-8 #{sourceFilePath} #{targetFilePath}</parameterString>
-      <!--winParameterString>-enc UTF-8 #{sourceFilePath} #{targetFilePath}</winParameterString-->
+      <winParameterString>-enc UTF-8 #{sourceFilePath} #{targetFilePath}</winParameterString>
       <installationDirective>You need to install pdftotext.</installationDirective>
     </command>
 
