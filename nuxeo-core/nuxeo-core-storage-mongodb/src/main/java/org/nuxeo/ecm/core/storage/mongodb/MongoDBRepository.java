@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -162,6 +163,24 @@ public class MongoDBRepository extends DBSRepositoryBase {
     /** Sequence allocation block size. */
     protected long sequenceBlockSize;
 
+    protected final int CHILD_CACHE_SIZE = 1000;
+
+    protected Map<String, State> childCache = new LinkedHashMap(CHILD_CACHE_SIZE + 1, .75F, true) {
+        // This method is called just after a new entry has been added
+        public boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > CHILD_CACHE_SIZE;
+        }
+    };
+
+    protected final int STATE_CACHE_SIZE = 1000;
+
+    protected Map<String, State> stateCache = new LinkedHashMap(STATE_CACHE_SIZE + 1, .75F, true) {
+        // This method is called just after a new entry has been added
+        public boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > STATE_CACHE_SIZE;
+        }
+    };
+
     public MongoDBRepository(ConnectionManager cm, MongoDBRepositoryDescriptor descriptor) {
         super(cm, descriptor.name, descriptor);
         try {
@@ -182,6 +201,7 @@ public class MongoDBRepository extends DBSRepositoryBase {
             sequenceBlockSize = sbs == null ? 1 : sbs.longValue();
             sequenceLeft = 0;
         }
+
         initRepository();
     }
 
@@ -607,6 +627,17 @@ public class MongoDBRepository extends DBSRepositoryBase {
 
     @Override
     public State readState(String id) {
+       State ret = stateCache.get(id);
+        if (ret == null) {
+            ret = readStateFromBackend(id);
+            if (ret != null) {
+                stateCache.put(id, ret);
+            }
+        }
+        return ret;
+    }
+
+    public State readStateFromBackend(String id) {
         DBObject query = new BasicDBObject(idKey, id);
         return findOne(query);
     }
@@ -644,9 +675,22 @@ public class MongoDBRepository extends DBSRepositoryBase {
 
     @Override
     public State readChildState(String parentId, String name, Set<String> ignored) {
+        String key = parentId + "/" + name;
+        State ret = childCache.get(key);
+        if (ret == null) {
+            ret = readChildStateFromBackend(parentId, name, ignored);
+            if (ret != null) {
+                childCache.put(key, ret);
+            }
+        }
+        return ret;
+    }
+
+    protected State readChildStateFromBackend(String parentId, String name, Set<String> ignored) {
         DBObject query = getChildQuery(parentId, name, ignored);
         return findOne(query);
     }
+
 
     protected void logQuery(String id, DBObject fields) {
         logQuery(new BasicDBObject(idKey, id), fields);
