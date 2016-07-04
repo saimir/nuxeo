@@ -16,15 +16,18 @@
  * Contributors:
  *      Thibaud Arguillere <targuillere@nuxeo.com>
  *      Vladimir Pasquier <vpasquier@nuxeo.com>
+ *      Ricardo Dias <rdias@nuxeo.com>
  */
 package org.nuxeo.ecm.automation.features;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.nuxeo.ecm.automation.context.ContextHelper;
 import org.nuxeo.ecm.core.api.Blob;
@@ -142,10 +145,37 @@ public class HTTPHelper implements ContextHelper {
             throw new RuntimeException(e);
         }
         if (response != null && response.getStatus() >= 200 && response.getStatus() < 300) {
-            return Blobs.createBlob(response.getEntityInputStream());
+
+            return setUpBlob(response);
         } else {
             return new StringBlob(response.getStatusInfo() != null ? response.getStatusInfo().toString() : "error");
         }
+    }
+
+    protected Blob setUpBlob(ClientResponse response) throws IOException {
+        Blob blob = Blobs.createBlob(response.getEntityInputStream());
+
+        MultivaluedMap<String, String> responseHeaders = response.getHeaders();
+        String disposition = responseHeaders.getFirst("Content-Disposition");
+
+        String filename = "";
+        if (disposition != null) {
+            // extracts file name from header field
+            int index = disposition.indexOf("filename=");
+            if (index > -1) {
+                filename = disposition.substring(index + 9);
+            }
+        }
+
+        if (!StringUtils.isEmpty(filename)) blob.setFilename(filename);
+
+        String encoding = responseHeaders.getFirst("Content-Encoding");
+        if (encoding != null) blob.setEncoding(encoding);
+
+        MediaType contentType = response.getType();
+        if (contentType != null) blob.setMimeType(contentType.getType());
+
+        return blob;
     }
 
 }

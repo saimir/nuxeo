@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import static org.junit.Assert.fail;
 import static org.mockserver.integration.ClientAndProxy.startClientAndProxy;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
@@ -79,8 +80,6 @@ import org.nuxeo.runtime.test.runner.FeaturesRunner;
 @Deploy({ "org.nuxeo.ecm.automation.core", "org.nuxeo.ecm.automation.features" })
 public class HTTPHelperTest {
 
-    protected static final Log log = LogFactory.getLog(HTTPHelperTest.class);
-
     @Inject
     CoreSession session;
 
@@ -127,7 +126,7 @@ public class HTTPHelperTest {
             headers.put("Content-Type", "application/json");
 
             // call the helper from the context helpers to perform the GET request
-            Blob httpResult = helper.call(null, null, "GET", SERVER_URL, headers);
+            Blob httpResult = helper.call("test", "test", "GET", SERVER_URL, headers);
             // parse the json result
             ObjectMapper mapper = new ObjectMapper();
             Map<String,String> jsonResult = mapper.readValue(httpResult.getString(), Map.class);
@@ -136,7 +135,7 @@ public class HTTPHelperTest {
             assertEquals("Testing the GET request.", message);
 
             // call the helper from the scripting
-            String expr = String.format("HTTP.call(null,null,\"GET\",\"%s\",headers)", SERVER_URL);
+            String expr = String.format("HTTP.call(\"test\",\"test\",\"GET\",\"%s\",headers)", SERVER_URL);
             ctx.put("headers", headers);
             Blob resultBlob = (Blob) Scripting.newExpression(expr).eval(ctx);
             String result = IOUtils.toString(resultBlob.getStream(), "utf-8");
@@ -145,7 +144,7 @@ public class HTTPHelperTest {
             message = jsonResult.get("message");
             assertEquals("Testing the GET request.", message);
         } catch (IOException exception){
-            log.error("Problem parsing the result. " + exception);
+            fail("Problem parsing the result. " + exception);
 
         }
     }
@@ -161,10 +160,10 @@ public class HTTPHelperTest {
             Map<String, String> responseHeaders = new HashMap<>(3);
             responseHeaders.put("Content-Type", "image/jpeg");
             responseHeaders.put("Cache-Control", "public, max-age=86400");
-            responseHeaders.put("Content-Disposition", "attachment; filename=\"sample.jpeg\"");
+            responseHeaders.put("Content-Disposition", "attachment; filename=sample.jpeg");
             createMockServer(responseHeaders, responseBody);
         } catch(IOException e) {
-            log.error("Error reading the image file." + e.getMessage());
+            fail("Error reading the image file." + e.getMessage());
         }
 
         HTTPHelper helper = getHTTPHelper();
@@ -175,11 +174,12 @@ public class HTTPHelperTest {
             headers.put("Content-Type", "image/jpeg");
 
             // call the helper from the context helpers to perform the GET request
-            Blob httpResult = helper.call(null, null, "GET", SERVER_URL, headers);
+            Blob httpResult = helper.call("test", "test", "GET", SERVER_URL, headers);
             // assert that the file was received
             assertTrue(httpResult.getLength() > 0);
+            assertEquals(httpResult.getFilename(), "sample.jpeg");
         } catch (IOException e) {
-            log.error("Error reading the image file." + e.getMessage());
+            fail("Error reading the image file." + e.getMessage());
         }
     }
 
@@ -210,6 +210,7 @@ public class HTTPHelperTest {
         new MockServerClient(SERVER_HOST, SERVER_PORT)
             .when(
                 request()
+                        .withHeader("Authorization", "Basic dGVzdDp0ZXN0")
                         .withMethod("GET")
                         .withPath(SERVER_PATH),
                 Times.exactly(2))
