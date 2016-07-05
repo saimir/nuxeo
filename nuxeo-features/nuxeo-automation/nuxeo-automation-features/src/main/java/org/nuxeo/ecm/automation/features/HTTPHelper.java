@@ -20,13 +20,20 @@
  */
 package org.nuxeo.ecm.automation.features;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.sun.jersey.core.util.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.nuxeo.ecm.automation.context.ContextHelper;
@@ -52,12 +59,14 @@ public class HTTPHelper implements ContextHelper {
 
     private static final Integer TIMEOUT = 1000 * 60 * 5; // 5min
 
+    private static final String HTTP_CONTENT_DISPOSITION = "Content-Disposition";
+
     public Blob call(String username, String password, String requestType, String path) throws IOException {
         return call(username, password, requestType, path, null, null, null, null);
     }
 
-    public Blob call(String username, String password, String requestType, String path,
-            Map<String, String> headers) throws IOException {
+    public Blob call(String username, String password, String requestType, String path, Map<String, String> headers)
+            throws IOException {
         return call(username, password, requestType, path, null, null, null, headers);
     }
 
@@ -145,18 +154,126 @@ public class HTTPHelper implements ContextHelper {
             throw new RuntimeException(e);
         }
         if (response != null && response.getStatus() >= 200 && response.getStatus() < 300) {
-
-            return setUpBlob(response);
+            return Blobs.createBlob(response.getEntityInputStream());
         } else {
             return new StringBlob(response.getStatusInfo() != null ? response.getStatusInfo().toString() : "error");
         }
     }
 
-    protected Blob setUpBlob(ClientResponse response) throws IOException {
-        Blob blob = Blobs.createBlob(response.getEntityInputStream());
+    /**
+     * GET requests
+     **/
 
-        MultivaluedMap<String, String> responseHeaders = response.getHeaders();
-        String disposition = responseHeaders.getFirst("Content-Disposition");
+    public Blob get(String url) throws IOException {
+        return invoke("GET", url, null, null, null, null);
+    }
+
+    public Blob get(String url, Map<String, String> headers, MultivaluedMap<String, String> queryParams) throws IOException {
+        return invoke("GET", url, headers, queryParams, null, null);
+    }
+
+    /**
+     * POST requests
+     **/
+
+    public Blob post(String url, Object data) throws IOException {
+        return invoke("POST", url, null, null, data, null);
+    }
+
+    public Blob post(String url, Map<String, String> headers, MultivaluedMap<String, String> queryParams, Object data,
+            MultiPart mp) throws IOException {
+        return invoke("POST", url, headers, queryParams, data, mp);
+    }
+
+    /**
+     * PUT requests
+     **/
+
+    public Blob put(String url, Object data) throws IOException {
+        return invoke("PUT", url, null, null, data, null);
+    }
+
+    public Blob put(String url, Map<String, String> headers, MultivaluedMap<String, String> queryParams, Object data,
+            MultiPart mp) throws IOException {
+        return invoke("PUT", url, headers, queryParams, data, mp);
+    }
+
+    /**
+    * DELETE requests
+    **/
+
+    public Blob delete(String url, Object data) throws IOException {
+        return invoke("DELETE", url, null, null, data, null);
+    }
+
+    public Blob delete(String url, Map<String, String> headers, MultivaluedMap<String, String> queryParams, Object data) throws IOException {
+        return invoke("DELETE", url, headers, queryParams, data, null);
+    }
+
+    private Blob invoke(String requestType, String url, Map<String, String> headers,
+            MultivaluedMap<String, String> queryParams, Object data, MultiPart mp) throws IOException {
+        ClientConfig config = new DefaultClientConfig();
+        config.getClasses().add(MultiPartWriter.class);
+        Client client = Client.create(config);
+        client.setConnectTimeout(TIMEOUT);
+
+        WebResource wr = client.resource(url);
+
+        if (queryParams != null && !queryParams.isEmpty()) {
+            wr = wr.queryParams(queryParams);
+        }
+        WebResource.Builder builder;
+        builder = wr.accept(MediaType.APPLICATION_JSON);
+        if (mp != null) {
+            builder = wr.type(MediaType.MULTIPART_FORM_DATA_TYPE);
+        }
+
+        // Adding some headers if needed
+        if (headers != null && !headers.isEmpty()) {
+            for (String headerKey : headers.keySet()) {
+                builder.header(headerKey, headers.get(headerKey));
+            }
+        }
+        ClientResponse response = null;
+        try {
+            switch (requestType) {
+            case "HEAD":
+            case "GET":
+                response = builder.get(ClientResponse.class);
+                break;
+            case "POST":
+                if (mp != null) {
+                    response = builder.post(ClientResponse.class, mp);
+                } else {
+                    response = builder.post(ClientResponse.class, data);
+                }
+                break;
+            case "PUT":
+                if (mp != null) {
+                    response = builder.put(ClientResponse.class, mp);
+                } else {
+                    response = builder.put(ClientResponse.class, data);
+                }
+                break;
+            case "DELETE":
+                response = builder.delete(ClientResponse.class, data);
+                break;
+            default:
+                break;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (response != null && response.getStatus() >= 200 && response.getStatus() < 300) {
+            return setUpBlob(response, url);
+        } else {
+            return new StringBlob(response.getStatusInfo() != null ? response.getStatusInfo().toString() : "error");
+        }
+    }
+
+    protected Blob setUpBlob(ClientResponse response, String url) throws IOException {
+        MultivaluedMap<String, String> headers = response.getHeaders();
+        String disposition = headers.getFirst(HTTP_CONTENT_DISPOSITION);
 
         String filename = "";
         if (disposition != null) {
@@ -165,17 +282,47 @@ public class HTTPHelper implements ContextHelper {
             if (index > -1) {
                 filename = disposition.substring(index + 9);
             }
+        } else {
+            // extracts file name from URL
+            filename = url.substring(url.lastIndexOf("/") + 1, url.length());
         }
 
-        if (!StringUtils.isEmpty(filename)) blob.setFilename(filename);
+        File resultFile = (StringUtils.isEmpty(filename))? File.createTempFile("HttpHelper-", null) : new File(filename);
+        IOUtils.copy(response.getEntityInputStream(), new FileOutputStream(resultFile));
+        Blob resultBlob = Blobs.createBlob(resultFile);
 
-        String encoding = responseHeaders.getFirst("Content-Encoding");
-        if (encoding != null) blob.setEncoding(encoding);
+        String encoding = headers.getFirst(HttpHeaders.CONTENT_ENCODING);
+        if (encoding != null) resultBlob.setEncoding(encoding);
 
         MediaType contentType = response.getType();
-        if (contentType != null) blob.setMimeType(contentType.getType());
+        if (contentType != null) resultBlob.setMimeType(contentType.getType());
 
-        return blob;
+        return resultBlob;
     }
 
+    public Map<String, String> basicAuthentication(String username, String password) {
+
+        Map<String, String> authenticationHeader = null;
+
+        if (username != null && password != null) {
+            try {
+                final byte[] prefix = (username + ":").getBytes(Charset.forName("iso-8859-1"));
+                final byte[] usernamePassword = new byte[prefix.length + password.getBytes().length];
+
+                System.arraycopy(prefix, 0, usernamePassword, 0, prefix.length);
+                System.arraycopy(password.getBytes(), 0, usernamePassword, prefix.length, password.getBytes().length);
+
+                String authentication = "Basic " + new String(Base64.encode(usernamePassword), "ASCII");
+
+                authenticationHeader = new HashMap<>();
+                authenticationHeader.put(HttpHeaders.AUTHORIZATION, authentication);
+
+
+            } catch (UnsupportedEncodingException ex) {
+                // This should never occur
+                throw new RuntimeException(ex);
+            }
+        }
+        return authenticationHeader;
+    }
 }
