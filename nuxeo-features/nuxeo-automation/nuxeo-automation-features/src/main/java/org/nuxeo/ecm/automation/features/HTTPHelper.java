@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -33,6 +34,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import com.sun.jersey.core.util.Base64;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -49,6 +51,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.multipart.MultiPart;
 import com.sun.jersey.multipart.impl.MultiPartWriter;
+import org.nuxeo.runtime.api.Framework;
 
 /**
  * @since 7.3
@@ -159,59 +162,35 @@ public class HTTPHelper implements ContextHelper {
             return new StringBlob(response.getStatusInfo() != null ? response.getStatusInfo().toString() : "error");
         }
     }
-
-    /**
-     * GET requests
-     **/
-
-    public Blob get(String url) throws IOException {
-        return invoke("GET", url, null, null, null, null);
+    
+    public Blob get(String url, Map<String, Object> options) throws IOException {
+        return invoke("GET", url, null, null, options);
     }
 
-    public Blob get(String url, Map<String, String> headers, MultivaluedMap<String, String> queryParams) throws IOException {
-        return invoke("GET", url, headers, queryParams, null, null);
+    public Blob post(String url, Object data, Map<String, Object> options) throws IOException {
+        return invoke("POST", url, data, null, options);
     }
 
-    /**
-     * POST requests
-     **/
-
-    public Blob post(String url, Object data) throws IOException {
-        return invoke("POST", url, null, null, data, null);
+    public Blob post(String url, MultiPart multiPart, Map<String, Object> options) throws IOException {
+        return invoke("POST", url, null, multiPart, options);
     }
 
-    public Blob post(String url, Map<String, String> headers, MultivaluedMap<String, String> queryParams, Object data,
-            MultiPart mp) throws IOException {
-        return invoke("POST", url, headers, queryParams, data, mp);
+    public Blob put(String url, Object data, Map<String, Object> options) throws IOException {
+        return invoke("PUT", url, data, null, options);
     }
 
-    /**
-     * PUT requests
-     **/
-
-    public Blob put(String url, Object data) throws IOException {
-        return invoke("PUT", url, null, null, data, null);
+    public Blob put(String url, MultiPart multiPart, Map<String, Object> options) throws IOException {
+        return invoke("PUT", url, null, multiPart, options);
     }
 
-    public Blob put(String url, Map<String, String> headers, MultivaluedMap<String, String> queryParams, Object data,
-            MultiPart mp) throws IOException {
-        return invoke("PUT", url, headers, queryParams, data, mp);
+    public Blob delete(String url, Object data, Map<String, Object> options) throws IOException {
+        return invoke("DELETE", url, data, null, options);
     }
 
-    /**
-    * DELETE requests
-    **/
+    private Blob invoke(String requestType, String url, Object data, MultiPart multipart, Map<String, Object> options) throws IOException {
+        MultivaluedMap<String, String> queryParams = getQueryParameters(options);
+        Map<String, String> headers = getHeaderParameters(options);
 
-    public Blob delete(String url, Object data) throws IOException {
-        return invoke("DELETE", url, null, null, data, null);
-    }
-
-    public Blob delete(String url, Map<String, String> headers, MultivaluedMap<String, String> queryParams, Object data) throws IOException {
-        return invoke("DELETE", url, headers, queryParams, data, null);
-    }
-
-    private Blob invoke(String requestType, String url, Map<String, String> headers,
-            MultivaluedMap<String, String> queryParams, Object data, MultiPart mp) throws IOException {
         ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(MultiPartWriter.class);
         Client client = Client.create(config);
@@ -224,7 +203,7 @@ public class HTTPHelper implements ContextHelper {
         }
         WebResource.Builder builder;
         builder = wr.accept(MediaType.APPLICATION_JSON);
-        if (mp != null) {
+        if (multipart != null) {
             builder = wr.type(MediaType.MULTIPART_FORM_DATA_TYPE);
         }
 
@@ -237,29 +216,29 @@ public class HTTPHelper implements ContextHelper {
         ClientResponse response = null;
         try {
             switch (requestType) {
-            case "HEAD":
-            case "GET":
-                response = builder.get(ClientResponse.class);
-                break;
-            case "POST":
-                if (mp != null) {
-                    response = builder.post(ClientResponse.class, mp);
-                } else {
-                    response = builder.post(ClientResponse.class, data);
-                }
-                break;
-            case "PUT":
-                if (mp != null) {
-                    response = builder.put(ClientResponse.class, mp);
-                } else {
-                    response = builder.put(ClientResponse.class, data);
-                }
-                break;
-            case "DELETE":
-                response = builder.delete(ClientResponse.class, data);
-                break;
-            default:
-                break;
+                case "HEAD":
+                case "GET":
+                    response = builder.get(ClientResponse.class);
+                    break;
+                case "POST":
+                    if (multipart != null) {
+                        response = builder.post(ClientResponse.class, multipart);
+                    } else {
+                        response = builder.post(ClientResponse.class, data);
+                    }
+                    break;
+                case "PUT":
+                    if (multipart != null) {
+                        response = builder.put(ClientResponse.class, multipart);
+                    } else {
+                        response = builder.put(ClientResponse.class, data);
+                    }
+                    break;
+                case "DELETE":
+                    response = builder.delete(ClientResponse.class, data);
+                    break;
+                default:
+                    break;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -271,7 +250,46 @@ public class HTTPHelper implements ContextHelper {
         }
     }
 
-    protected Blob setUpBlob(ClientResponse response, String url) throws IOException {
+    private Map<String, String> getHeaderParameters(Map<String, Object> options) {
+        if (options != null) {
+            Map<String, String> headers = new HashMap<>();
+
+            Map<String, String> authorization = (Map<String, String>) options.get("auth");
+            if (authorization != null){
+                String method = authorization.get("method");
+                switch (method) {
+                    case "basic":
+                        Map<String, String> header = basicAuthentication(authorization.get("username"), authorization.get("password"));
+                        headers.putAll(header);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            Map<String, String> headersOptions = (Map<String, String>) options.get("headers");
+            if (headersOptions != null) headers.putAll(headersOptions);
+
+            return headers;
+        }
+        return null;
+    }
+
+    private MultivaluedMap<String, String> getQueryParameters(Map<String, Object> options) {
+        if (options != null) {
+            Map<String, List<String>> params = (Map<String, List<String>>)options.get("params");
+            if (params != null){
+                MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+                for (String key : params.keySet()) {
+                    queryParams.put(key, params.get(key));
+                }
+                return queryParams;
+            }
+        }
+        return null;
+    }
+
+    private Blob setUpBlob(ClientResponse response, String url) throws IOException {
         MultivaluedMap<String, String> headers = response.getHeaders();
         String disposition = headers.getFirst(HTTP_CONTENT_DISPOSITION);
 
@@ -287,9 +305,8 @@ public class HTTPHelper implements ContextHelper {
             filename = url.substring(url.lastIndexOf("/") + 1, url.length());
         }
 
-        File resultFile = (StringUtils.isEmpty(filename))? File.createTempFile("HttpHelper-", null) : new File(filename);
-        IOUtils.copy(response.getEntityInputStream(), new FileOutputStream(resultFile));
-        Blob resultBlob = Blobs.createBlob(resultFile);
+        Blob resultBlob = Blobs.createBlob(response.getEntityInputStream());
+        if (!StringUtils.isEmpty(filename)) resultBlob.setFilename(filename);
 
         String encoding = headers.getFirst(HttpHeaders.CONTENT_ENCODING);
         if (encoding != null) resultBlob.setEncoding(encoding);
@@ -300,7 +317,7 @@ public class HTTPHelper implements ContextHelper {
         return resultBlob;
     }
 
-    public Map<String, String> basicAuthentication(String username, String password) {
+    private Map<String, String> basicAuthentication(String username, String password) {
 
         Map<String, String> authenticationHeader = null;
 
