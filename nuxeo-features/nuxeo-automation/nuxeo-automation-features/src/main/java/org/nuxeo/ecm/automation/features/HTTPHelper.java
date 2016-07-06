@@ -20,8 +20,6 @@
  */
 package org.nuxeo.ecm.automation.features;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -35,7 +33,6 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import com.sun.jersey.core.util.Base64;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.nuxeo.ecm.automation.context.ContextHelper;
@@ -51,7 +48,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.multipart.MultiPart;
 import com.sun.jersey.multipart.impl.MultiPartWriter;
-import org.nuxeo.runtime.api.Framework;
 
 /**
  * @since 7.3

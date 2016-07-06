@@ -31,7 +31,6 @@ import static org.mockserver.model.HttpResponse.response;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +53,6 @@ import org.mockserver.model.Body;
 import org.mockserver.model.Delay;
 import org.mockserver.model.Header;
 import org.mockserver.model.JsonBody;
-import org.mortbay.util.ajax.JSON;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.context.ContextHelper;
@@ -123,11 +121,8 @@ public class HTTPHelperTest {
 
     @Test
     public void testHTTPHelperGet() {
-        // set up and create the mock server
         createMockServer("GET", SERVER_PATH, DEFAULT_HTTP_RESPONSE);
-
         try {
-            // call the helper from the scripting
             String expr = String.format(
                     "HTTP.get(\'%s\', {'auth' : { 'method' : 'basic', 'username' : 'test', 'password' : 'test' }})",
                     SERVER_URL);
@@ -145,19 +140,14 @@ public class HTTPHelperTest {
 
     @Test
     public void testHTTPHelperGetWithParams() {
-        // set up and create the mock server
         createMockServer("GET", SERVER_PATH, DEFAULT_HTTP_RESPONSE);
-
         try {
-            // call the helper from the scripting
             String expr = String.format(
                     "HTTP.get(\'%s\', " + "{'auth' : { 'method' : 'basic', 'username' : 'test', 'password' : 'test' }, "
                             + "'params' : { 'param1' : [ 'value1' ] , 'param2' : [ 'value2' ] }})",
                     SERVER_URL);
             Blob resultBlob = (Blob) Scripting.newExpression(expr).eval(ctx);
             String result = IOUtils.toString(resultBlob.getStream(), "utf-8");
-
-            // parse the json result
             ObjectMapper mapper = new ObjectMapper();
             Map<String, String> jsonResult = mapper.readValue(result, Map.class);
 
@@ -170,19 +160,14 @@ public class HTTPHelperTest {
 
     @Test
     public void testHTTPHelperGetWithHeaders() {
-        // set up and create the mock server
         createMockServer("GET", SERVER_PATH, DEFAULT_HTTP_RESPONSE);
-
         try {
-            // call the helper from the scripting
             String expr = String.format(
                     "HTTP.get(\'%s\', " + "{'auth' : { 'method' : 'basic', 'username' : 'test', 'password' : 'test' }, "
                             + "'headers' : { 'Accept' : 'application/json' , 'User-Agent' : 'Mozilla/5.0' }})",
                     SERVER_URL);
             Blob resultBlob = (Blob) Scripting.newExpression(expr).eval(ctx);
             String result = IOUtils.toString(resultBlob.getStream(), "utf-8");
-
-            // parse the json result
             ObjectMapper mapper = new ObjectMapper();
             Map<String, String> jsonResult = mapper.readValue(result, Map.class);
 
@@ -195,11 +180,8 @@ public class HTTPHelperTest {
 
     @Test
     public void testHTTPHelperPost() {
-        // set up and create the mock server
         createMockServer("POST", SERVER_PATH, DEFAULT_HTTP_RESPONSE);
-
         try {
-            // call the helper from the scripting
             String expr = String.format(
                     "HTTP.post(\'%s\', 'Test', {'auth' : { 'method' : 'basic', 'username' : 'test', 'password' : 'test' }})",
                     SERVER_URL);
@@ -217,11 +199,8 @@ public class HTTPHelperTest {
 
     @Test
     public void testHTTPHelperPut() {
-        // set up and create the mock server
         createMockServer("PUT", SERVER_PATH, DEFAULT_HTTP_RESPONSE);
-
         try {
-            // call the helper from the scripting
             String expr = String.format(
                     "HTTP.put(\'%s\', 'Test', {'auth' : { 'method' : 'basic', 'username' : 'test', 'password' : 'test' }})",
                     SERVER_URL);
@@ -239,11 +218,8 @@ public class HTTPHelperTest {
 
     @Test
     public void testHTTPHelperDelete() {
-        // set up and create the mock server
         createMockServer("DELETE", SERVER_PATH, DEFAULT_HTTP_RESPONSE);
-
         try {
-            // call the helper from the scripting
             String expr = String.format(
                     "HTTP.delete(\'%s\', 'Test', {'auth' : { 'method' : 'basic', 'username' : 'test', 'password' : 'test' }})",
                     SERVER_URL);
@@ -261,7 +237,6 @@ public class HTTPHelperTest {
 
     @Test
     public void testHTTPHelperGetDownloadFile() {
-        // set up and create the mock server
         try {
             File file = FileUtils.getResourceFileFromContext("test-data/sample.jpeg");
             byte[] answer = FileUtils.readBytes(file);
@@ -271,7 +246,6 @@ public class HTTPHelperTest {
             fail("Error reading the image file." + e.getMessage());
         }
 
-        // call the helper from the scripting
         String expr = String.format(
                 "HTTP.get(\'%s\', {'auth' : { 'method' : 'basic', 'username' : 'test', 'password' : 'test' }})",
                 SERVER_URL + IMAGE_FILENAME);
